@@ -13,5 +13,10 @@
   },
   "scripts": {
     "postdeploy": "bundle exec rake db:migrate"
-  }
+  },
+  "buildpacks": [
+    {
+      "url": "https://github.com/DataDog/heroku-buildpack-datadog.git"
+    }
+  ]
 }
