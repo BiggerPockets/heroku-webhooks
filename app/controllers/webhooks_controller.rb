@@ -7,6 +7,14 @@ class WebhooksController < ActionController::API
       serialized_event = ActiveModelSerializers::SerializableResource.new(event, {serializer: EventSerializer})
       ActionCable.server.broadcast 'events', serialized_event
 
+      Rails.logger.info(
+        message: "Heroku triggered resource: #{event.resource} action: #{event.action}",
+        application: event.application,
+        evt: {
+          name: event.name,
+          payload: event.payload
+        }
+      )
       # TODO ensure transaction around request?
       # TODO: trim events list?
     else

@@ -3,6 +3,10 @@
 module SemanticLogger
   module Formatters
     class DatadogJson < ::SemanticLogger::Formatters::Json
+      def application
+        super if hash.exclude?(:application)
+      end
+
       def duration
         return unless log.duration
 
