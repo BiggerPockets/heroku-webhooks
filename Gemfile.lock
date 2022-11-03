@@ -95,6 +95,12 @@ GEM
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
+    ddtrace (1.5.2)
+      debase-ruby_core_source (>= 0.10.16, <= 0.10.17)
+      libdatadog (~> 0.7.0.1.1)
+      libddwaf (~> 1.5.1.0.0)
+      msgpack
+    debase-ruby_core_source (0.10.17)
     diff-lcs (1.5.0)
     digest (3.1.0)
     dotenv (2.7.6)
@@ -109,6 +115,7 @@ GEM
       faraday-net_http (~> 2.0)
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (2.0.3)
+    ffi (1.15.5)
     globalid (1.0.0)
       activesupport (>= 5.0)
     hashie (5.0.0)
@@ -128,6 +135,9 @@ GEM
     jwt (2.4.1)
     launchy (2.5.0)
       addressable (~> 2.7)
+    libdatadog (0.7.0.1.1)
+    libddwaf (1.5.1.0.0)
+      ffi (~> 1.0)
     loofah (2.18.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -140,6 +150,7 @@ GEM
     mini_portile2 (2.8.0)
     minitest (5.16.2)
     moneta (1.0.0)
+    msgpack (1.6.0)
     multi_json (1.15.0)
     multi_xml (0.6.0)
     net-imap (0.2.3)
@@ -156,6 +167,7 @@ GEM
       digest
       net-protocol
       timeout
+    net_tcp_client (2.2.0)
     nio4r (2.5.8)
     nokogiri (1.13.9)
       mini_portile2 (~> 2.8.0)
@@ -213,6 +225,10 @@ GEM
       nokogiri (>= 1.6)
     rails-html-sanitizer (1.4.3)
       loofah (~> 2.3)
+    rails_semantic_logger (4.10.0)
+      rack
+      railties (>= 5.1)
+      semantic_logger (~> 4.9)
     railties (7.0.3.1)
       actionpack (= 7.0.3.1)
       activesupport (= 7.0.3.1)
@@ -252,6 +268,8 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    semantic_logger (4.12.0)
+      concurrent-ruby (~> 1.0)
     sprockets (4.1.1)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -290,19 +308,23 @@ DEPENDENCIES
   byebug
   capybara
   database_cleaner
+  ddtrace (~> 1.5)
   dotenv-rails (>= 2.7.5)
   jquery-rails (>= 4.3.5)
   launchy
   multi_json
+  net_tcp_client (~> 2.2)
   omniauth-heroku
   omniauth-rails_csrf_protection
   pg (~> 1.4.1)
   platform-api
   puma (~> 5.6.4)
   rails (~> 7.0.3.1)
+  rails_semantic_logger (~> 4.10)
   rspec-rails (>= 3.9.1)
   rspec_junit_formatter
   selenium-webdriver
+  semantic_logger (~> 4.12)
   sprockets-rails
   tzinfo-data
   uglifier

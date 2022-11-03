@@ -32,5 +32,37 @@ module WebhooksConsumerDemo
       scope: 'read identity',
       fetch_info: true
     end
+
+    config.log_tags = {
+      http: lambda do |request|
+        {
+          headers: {
+            accept: request.accept,
+          },
+          ip: request.remote_ip,
+          request_id: request.request_id,
+          url: request.original_url,
+          referer: request.referer,
+          useragent: request.user_agent,
+          queue_time: request.env["queue_time"],
+        }
+      end,
+      network: lambda do |request|
+        {
+          bytes_written: request.content_length,
+        }
+      end,
+      dd: lambda do |_request|
+        correlation = Datadog::Tracing.correlation
+        {
+          # To preserve precision during JSON serialization, use strings for large numbers
+          trace_id: correlation.trace_id.to_s,
+          span_id: correlation.span_id.to_s,
+          env: correlation.env.to_s,
+          service: correlation.service.to_s,
+          version: correlation.version.to_s,
+        }
+      end,
+    }
   end
 end
