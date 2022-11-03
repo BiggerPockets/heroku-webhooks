@@ -40,3 +40,5 @@ gem "net_tcp_client", "~> 2.2"
 gem "rails_semantic_logger", "~> 4.10"
 
 gem "ddtrace", "~> 1.5"
+
+gem "amazing_print", "~> 1.4"

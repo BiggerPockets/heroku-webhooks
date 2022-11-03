@@ -33,6 +33,11 @@ module WebhooksConsumerDemo
       fetch_info: true
     end
 
+    config.rails_semantic_logger.semantic   = true
+    config.rails_semantic_logger.started    = true
+    config.rails_semantic_logger.processing = true
+    config.rails_semantic_logger.rendered   = true
+
     config.log_tags = {
       http: lambda do |request|
         {

@@ -16,3 +16,7 @@ if Rails.env.review? || Rails.env.production? || ENV["LOG_TO_TCP_COLLECTOR"]
     Rails.logger.warn(exception)
   end
 end
+
+Datadog.configure do |config|
+  config.env = Rails.env
+end
