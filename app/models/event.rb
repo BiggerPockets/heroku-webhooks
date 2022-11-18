@@ -18,4 +18,8 @@ class Event < ApplicationRecord
   def action
     payload["action"] || "<unknown>"
   end
+
+  def user
+    payload["actor"] || {}
+  end
 end

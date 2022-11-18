@@ -10,9 +10,8 @@ class WebhooksController < ActionController::API
       Rails.logger.info(
         message: "Heroku triggered resource: #{event.resource} action: #{event.action}",
         application: event.application,
-        evt: {
-          name: event.name_in_past_tense
-        }.merge(event.resource.to_sym => event.payload)
+        evt: { name: event.name_in_past_tense }.merge(event.resource.to_sym => event.payload),
+        usr: event.user
       )
       # TODO ensure transaction around request?
       # TODO: trim events list?
