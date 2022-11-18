@@ -44,8 +44,8 @@ RSpec.describe "Webhooks", type: :request do
     event_log_entry = logs.find_by!(level: "info", application: "biggerpockets")
     expect(event_log_entry).to include(
       evt: {
-        name: "heroku.release.create",
-        payload: {
+        name: "app.release.created",
+        release: {
           action: "create",
           resource: "release",
           created_at: "2022-11-02T12:14:20.166370Z",

@@ -4,7 +4,11 @@ class Event < ApplicationRecord
   end
 
   def name
-    "heroku.#{resource}.#{action}"
+    "app.#{resource}.#{action}"
+  end
+
+  def name_in_past_tense
+    "#{name}d"
   end
 
   def resource
