@@ -53,7 +53,7 @@ RSpec.describe 'Webhooks', type: :request do
       },
       evt: {
         name: 'app.release.created',
-        release: {
+        payload: {
           action: 'create',
           actor: {
             email: 'actor@example.org',
