@@ -9,13 +9,7 @@ module AuthenticatingController
       end
       dev_app
     else
-      match = request.host.match(/(.*)\.herokuapp\.com$/)
-
-      unless match
-        raise 'Could not determine heroku app from host'
-      end
-
-      match[1]
+      ENV.fetch("HEROKU_APP_NAME")
     end
   end
 
@@ -60,9 +54,9 @@ module AuthenticatingController
         format.html { render html: "Forbidden", status: :forbidden }
         format.json { render json: {'error' => 'forbidden'}, status: :forbidden }
       end
-    rescue Excon::Error::NotFound
+    rescue Excon::Error::NotFound => error
       respond_to do |format|
-        format.html { render html: "Not Found", status: :not_found}
+        format.html { render html: "Not Found: #{error}", status: :not_found}
         format.json { render json: {'error' => 'not_found'}, status: :not_found}
       end
     end
