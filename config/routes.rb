@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
-  resources :webhooks, only: [:create]
+  namespace :heroku do
+    resources :webhooks, only: [:create]
+  end
   resources :events, only: [:index]
   resources :setup, only: [:index]
 

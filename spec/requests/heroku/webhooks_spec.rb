@@ -1,22 +1,22 @@
 require 'rails_helper'
 
-RSpec.describe 'Webhooks', type: :request do
+RSpec.describe 'Heroku Webhooks', type: :request do
   include StructuredLogging::TestHelper
 
   it 'requires a signature' do
-    post webhooks_path, as: :json, params: {}
+    post heroku_webhooks_path, as: :json, params: {}
     expect(response).to have_http_status(:forbidden)
   end
 
   it 'does not accept invalid requests' do
     payload = { 'foo' => 'bar' }
-    post webhooks_url, as: :json, params: payload, headers: signature_header(payload, 'boom!')
+    post heroku_webhooks_url, as: :json, params: payload, headers: signature_header(payload, 'boom!')
     expect(response).to have_http_status(:forbidden)
   end
 
   it 'can receive and store a webhook' do
     payload = { 'foo' => 'bar' }
-    post webhooks_url, as: :json, params: payload, headers: signature_header(payload)
+    post heroku_webhooks_url, as: :json, params: payload, headers: signature_header(payload)
     expect(response).to have_http_status(:success)
     expect(payload).to eq(Event.last.payload)
   end
@@ -43,7 +43,7 @@ RSpec.describe 'Webhooks', type: :request do
       }
     }
     logs = capture_json_logs do
-      post webhooks_url, as: :json, params: payload, headers: signature_header(payload)
+      post heroku_webhooks_url, as: :json, params: payload, headers: signature_header(payload)
     end
     event_log_entry = logs.find_by!(level: 'info', application: 'biggerpockets')
     expect(event_log_entry).to include(
