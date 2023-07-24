@@ -22,4 +22,8 @@ class Event < ApplicationRecord
   def user
     payload["actor"] || {}
   end
+
+  def self.truncate_to_recent!
+    order(created_at: :desc).offset(100).destroy_all
+  end
 end

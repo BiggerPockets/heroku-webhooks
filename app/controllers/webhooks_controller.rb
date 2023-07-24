@@ -14,7 +14,7 @@ class WebhooksController < ActionController::API
         usr: event.user
       )
       # TODO ensure transaction around request?
-      # TODO: trim events list?
+      Event.truncate_to_recent!
     else
       render json: {'error' => 'signature_mismatch'}, status: 403
     end
