@@ -4,8 +4,7 @@ module Segment
   class WebhooksController < ActionController::API
     def create
       if valid_signature?
-        event = Event.create(payload: params['webhook'])
-        event.reload
+        event = Event.new(payload: params['webhook'])
         Rails.configuration.statsd.increment(
           'segment.events',
           tags: [
@@ -29,7 +28,6 @@ module Segment
           )
         end
 
-        Event.truncate_to_recent!
         render head: :ok
       else
         render json: { error: 'signature_mismatch' }, status: 403

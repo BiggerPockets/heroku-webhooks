@@ -20,13 +20,6 @@ RSpec.describe 'Segment Webhooks', type: :request do
     expect(response).to have_http_status(:forbidden)
   end
 
-  it 'can receive and store a webhook' do
-    payload = { foo: 'bar' }
-    post segment_webhooks_url, as: :json, params: payload, headers: signature_header(payload)
-    expect(response).to have_http_status(:success)
-    expect(payload.stringify_keys).to eq(Event.last.payload)
-  end
-
   it 'stores the UTMs of the Segment event in Datadog via Statsd' do
     payload_with_utms = payload.deep_merge(
       webhook: {
