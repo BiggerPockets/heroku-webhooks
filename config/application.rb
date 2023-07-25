@@ -37,6 +37,7 @@ module WebhooksConsumerDemo
     config.rails_semantic_logger.processing = true
     config.rails_semantic_logger.rendered   = true
 
+    config.statsd = Datadog::Statsd.new('localhost', 8125, tags: { env: ENV['RAILS_ENV'] })
     config.log_tags = {
       http: lambda do |request|
         {
