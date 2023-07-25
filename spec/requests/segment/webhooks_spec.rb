@@ -28,6 +28,8 @@ RSpec.describe 'Segment Webhooks', type: :request do
   it 'stores the UTMs of the Segment event in Datadog via Statsd' do
     payload_with_utms = payload.deep_merge(
       webhook: {
+        anonymousId: '97cfe16b-551a-4ddc-89d0-1c5b1ccb4ea0',
+        userId: '2638327',
         context: {
           campaign: {
             name: 'campaign-name',
@@ -50,7 +52,67 @@ RSpec.describe 'Segment Webhooks', type: :request do
       delta: 1,
       opts: {
         tags: [
-          'utms:c::campaign-name/m::campaign-medium/s::campaign-source/t::campaign-term/c::campaign-content'
+          'utms:c::campaign-name/m::campaign-medium/s::campaign-source/t::campaign-term/c::campaign-content',
+          'user_id_format:social_user',
+          'anonymous_user_id_format:guid'
+        ]
+      }
+    )
+  end
+
+  it "labels the user IDs as blank when they're missing " \
+     'so we can detect when incorrect events are triggered' do
+    payload_without_user_ids = payload.deep_merge(
+      webhook: {
+        userId: nil,
+        anonymousId: nil
+      }
+    )
+    post segment_webhooks_url,
+         as: :json,
+         params: payload_without_user_ids,
+         headers: signature_header(payload_without_user_ids)
+
+    events = Rails.configuration.statsd.events
+    expect(events.size).to eq(1)
+    expect(events.first.to_h).to eq(
+      type: Datadog::Statsd::COUNTER_TYPE,
+      stat: 'segment.events',
+      delta: 1,
+      opts: {
+        tags: [
+          'utms:c::/m::/s::/t::/c::',
+          'user_id_format:blank',
+          'anonymous_user_id_format:blank'
+        ]
+      }
+    )
+  end
+
+  it 'labels the user IDs as fake guid when the ID has groups of four characters split by - ' \
+     'so we can detect when incorrect events are triggered' do
+    payload_without_user_ids = payload.deep_merge(
+      webhook: {
+        userId: 'abcd-efgh-efgh-ijkl-mnop',
+        anonymousId: 'abcd-efgh-efgh-ijkl-mnop'
+      }
+    )
+    post segment_webhooks_url,
+         as: :json,
+         params: payload_without_user_ids,
+         headers: signature_header(payload_without_user_ids)
+
+    events = Rails.configuration.statsd.events
+    expect(events.size).to eq(1)
+    expect(events.first.to_h).to eq(
+      type: Datadog::Statsd::COUNTER_TYPE,
+      stat: 'segment.events',
+      delta: 1,
+      opts: {
+        tags: [
+          'utms:c::/m::/s::/t::/c::',
+          'user_id_format:fake_guid',
+          'anonymous_user_id_format:fake_guid'
         ]
       }
     )
