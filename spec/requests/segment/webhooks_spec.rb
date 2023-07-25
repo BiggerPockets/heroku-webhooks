@@ -61,7 +61,7 @@ RSpec.describe 'Segment Webhooks', type: :request do
   end
 
   it "labels the user IDs as blank when they're missing " \
-     'so we can detect when incorrect events are triggered' do
+     'so we can detect when users are incorrectly identified in Segment' do
     payload_without_user_ids = payload.deep_merge(
       webhook: {
         userId: nil,
@@ -90,7 +90,7 @@ RSpec.describe 'Segment Webhooks', type: :request do
   end
 
   it 'labels the user IDs as fake guid when the ID has groups of four characters split by - ' \
-     'so we can detect when incorrect events are triggered' do
+     'so we can detect when users are incorrectly identified in Segment' do
     payload_without_user_ids = payload.deep_merge(
       webhook: {
         userId: 'abcd-efgh-efgh-ijkl-mnop',
@@ -119,7 +119,7 @@ RSpec.describe 'Segment Webhooks', type: :request do
   end
 
   it 'labels the user IDs as fake guid when the ID has groups of four characters split by - ' \
-     'so we can detect when incorrect events are triggered' do
+     'so we can detect when users are incorrectly identified in Segment' do
     payload_without_user_ids = payload.deep_merge(
       webhook: {
         userId: '17553f63-c18b-4173-9a10-2355ec3bd25f',
@@ -142,6 +142,35 @@ RSpec.describe 'Segment Webhooks', type: :request do
           'utms:c::/m::/s::/t::/c::',
           'user_id_format:guid',
           'anonymous_user_id_format:guid'
+        ]
+      }
+    )
+  end
+
+  it 'labels the user IDs as invalid when they do not match any known format ' \
+     'so we can detect when users are incorrectly identified in Segment' do
+    payload_without_user_ids = payload.deep_merge(
+      webhook: {
+        userId: 'invalid-format',
+        anonymousId: 'invalid-format'
+      }
+    )
+    post segment_webhooks_url,
+         as: :json,
+         params: payload_without_user_ids,
+         headers: signature_header(payload_without_user_ids)
+
+    events = Rails.configuration.statsd.events
+    expect(events.size).to eq(1)
+    expect(events.first.to_h).to eq(
+      type: Datadog::Statsd::COUNTER_TYPE,
+      stat: 'segment.events',
+      delta: 1,
+      opts: {
+        tags: [
+          'utms:c::/m::/s::/t::/c::',
+          'user_id_format:invalid',
+          'anonymous_user_id_format:invalid'
         ]
       }
     )

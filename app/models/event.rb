@@ -70,8 +70,10 @@ class Event < ApplicationRecord
       'fake_guid'
     elsif guid?(user_id)
       'guid'
-    else
+    elsif user_id.match?(/^[0-9]+$/)
       'social_user'
+    else
+      'invalid'
     end
   end
 
@@ -83,7 +85,7 @@ class Event < ApplicationRecord
     elsif guid?(anonymous_id)
       'guid'
     else
-      'unknown'
+      'invalid'
     end
   end
 
