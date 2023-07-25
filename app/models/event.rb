@@ -55,6 +55,10 @@ class Event < ApplicationRecord
     payload['anonymousId']
   end
 
+  def guid?(id)
+    id.to_s.match?(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)
+  end
+
   def fake_guid?(id)
     id.split('-').all? { |group| group.size == 4 }
   end
@@ -64,6 +68,8 @@ class Event < ApplicationRecord
       'blank'
     elsif fake_guid?(user_id)
       'fake_guid'
+    elsif guid?(user_id)
+      'guid'
     else
       'social_user'
     end
@@ -74,8 +80,10 @@ class Event < ApplicationRecord
       'blank'
     elsif fake_guid?(anonymous_id)
       'fake_guid'
-    else
+    elsif guid?(anonymous_id)
       'guid'
+    else
+      'unknown'
     end
   end
 
