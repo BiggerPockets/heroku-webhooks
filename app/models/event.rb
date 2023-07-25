@@ -93,6 +93,14 @@ class Event < ApplicationRecord
     end
   end
 
+  def user_id_fake_guid?
+    user_id_format == 'fake_guid'
+  end
+
+  def anonymous_id_fake_guid?
+    anonymous_id_format == 'fake_guid'
+  end
+
   def user_id_invalid?
     user_id_format == 'invalid'
   end
@@ -105,6 +113,8 @@ class Event < ApplicationRecord
     payload_errors = []
     payload_errors << { code: 'event.user_id.invalid' } if user_id_invalid?
     payload_errors << { code: 'event.anonymous_id.invalid' } if anonymous_id_invalid?
+    payload_errors << { code: 'event.user_id.fake_guid' } if user_id_fake_guid?
+    payload_errors << { code: 'event.anonymous_id.fake_guid' } if anonymous_id_fake_guid?
     payload_errors
   end
 

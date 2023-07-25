@@ -16,9 +16,9 @@ module Segment
         )
         Rails.configuration.statsd.flush(sync: true)
 
-        if event.user_id_invalid? || event.anonymous_id_invalid?
+        if event.user_id_invalid? || event.anonymous_id_invalid? || event.user_id_fake_guid? || event.anonymous_id_fake_guid?
           Rails.logger.warn(
-            message: 'Segment event validation failed',
+            message: 'Segment event has incorrect user or anonymous ID',
             application: 'segment',
             evt: {
               name: 'segment.event_validated',

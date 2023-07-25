@@ -194,7 +194,7 @@ RSpec.describe 'Segment Webhooks', type: :request do
 
     event_log_entry = logs.find_by!(level: 'warn', application: 'segment')
     expect(event_log_entry.slice(:evt, :message)).to eq(
-      message: 'Segment event validation failed',
+      message: 'Segment event has incorrect user or anonymous ID',
       evt: {
         name: 'segment.event_validated',
         outcome: 'failure',
