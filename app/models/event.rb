@@ -64,18 +64,18 @@ class Event < ApplicationRecord
   end
 
   def fake_guid?(id)
-    id.split('-').all? { |group| group.size == 4 }
+    id.split('-').any? && id.split('-').all? { |group| group.size == 4 }
   end
 
   def user_id_format
     if user_id.blank?
       'blank'
-    elsif guid?(user_id)
-      'guid'
-    elsif fake_guid?(user_id)
-      'fake_guid'
     elsif user_id.match?(/^[0-9]+$/)
       'social_user'
+    elsif fake_guid?(user_id)
+      'fake_guid'
+    elsif guid?(user_id)
+      'guid'
     else
       'invalid'
     end
