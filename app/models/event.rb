@@ -89,8 +89,19 @@ class Event < ApplicationRecord
     end
   end
 
-  def either_user_id_or_anoymous_id_invalid?
-    user_id_format == 'invalid' || anonymous_id_format == 'invalid'
+  def user_id_invalid?
+    user_id_format == 'invalid'
+  end
+
+  def anonymous_id_invalid?
+    anonymous_id_format == 'invalid'
+  end
+
+  def payload_errors
+    payload_errors = []
+    payload_errors << { code: 'event.user_id.invalid' } if user_id_invalid?
+    payload_errors << { code: 'event.anonymous_id.invalid' } if anonymous_id_invalid?
+    payload_errors
   end
 
   def self.truncate_to_recent!

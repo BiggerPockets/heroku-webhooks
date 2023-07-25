@@ -16,11 +16,16 @@ module Segment
         )
         Rails.configuration.statsd.flush(sync: true)
 
-        if event.either_user_id_or_anoymous_id_invalid?
+        if event.user_id_invalid? || event.anonymous_id_invalid?
           Rails.logger.warn(
             message: 'Segment event validation failed',
             application: 'segment',
-            evt: { name: 'segment.event_validated', outcome: 'failure', payload: params['webhook'] }
+            evt: {
+              name: 'segment.event_validated',
+              outcome: 'failure',
+              errors: event.payload_errors,
+              payload: params['webhook']
+            }
           )
         end
 

@@ -198,6 +198,7 @@ RSpec.describe 'Segment Webhooks', type: :request do
       evt: {
         name: 'segment.event_validated',
         outcome: 'failure',
+        errors: [{ code: 'event.user_id.invalid' }],
         payload: adjusted_payload.fetch(:webhook)
       }
     )
