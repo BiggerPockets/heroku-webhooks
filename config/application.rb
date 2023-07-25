@@ -1,6 +1,5 @@
-require_relative "boot"
-
-require "rails/all"
+require_relative 'boot'
+require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -29,8 +28,8 @@ module WebhooksConsumerDemo
     # Omniauth:
     config.middleware.use OmniAuth::Builder do
       provider :heroku, ENV['HEROKU_OAUTH_ID'], ENV['HEROKU_OAUTH_SECRET'],
-      scope: 'read identity',
-      fetch_info: true
+               scope: 'read identity',
+               fetch_info: true
     end
 
     config.rails_semantic_logger.semantic   = true
@@ -42,19 +41,19 @@ module WebhooksConsumerDemo
       http: lambda do |request|
         {
           headers: {
-            accept: request.accept,
+            accept: request.accept
           },
           ip: request.remote_ip,
           request_id: request.request_id,
           url: request.original_url,
           referer: request.referer,
           useragent: request.user_agent,
-          queue_time: request.env["queue_time"],
+          queue_time: request.env['queue_time']
         }
       end,
       network: lambda do |request|
         {
-          bytes_written: request.content_length,
+          bytes_written: request.content_length
         }
       end,
       dd: lambda do |_request|
@@ -65,9 +64,9 @@ module WebhooksConsumerDemo
           span_id: correlation.span_id.to_s,
           env: correlation.env.to_s,
           service: correlation.service.to_s,
-          version: correlation.version.to_s,
+          version: correlation.version.to_s
         }
-      end,
+      end
     }
   end
 end
