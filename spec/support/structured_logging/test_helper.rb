@@ -23,7 +23,7 @@ module StructuredLogging
       end
 
       def find! &block
-        find(-> { raise NotFound.new("Cannot find log entry matching:\n\n#{block.source.strip}\n\n in logs:\n\n#{to_a}") }, &block)
+        find(-> { raise NotFound.new("Cannot find log entry matching:\n\n#{block.source.strip}\n\n in logs:\n\n#{JSON.pretty_generate(to_a)}") }, &block)
       end
     end
 
