@@ -89,6 +89,10 @@ class Event < ApplicationRecord
     end
   end
 
+  def either_user_id_or_anoymous_id_invalid?
+    user_id_format == 'invalid' || anonymous_id_format == 'invalid'
+  end
+
   def self.truncate_to_recent!
     order(created_at: :desc).offset(100).in_batches.destroy_all
   end

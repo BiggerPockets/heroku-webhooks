@@ -5,6 +5,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Segment Webhooks', type: :request do
+  include StructuredLogging::TestHelper
+
   before { Rails.configuration.statsd.clear }
   after { Rails.configuration.statsd.clear }
 
@@ -172,6 +174,31 @@ RSpec.describe 'Segment Webhooks', type: :request do
           'user_id_format:invalid',
           'anonymous_user_id_format:invalid'
         ]
+      }
+    )
+  end
+
+  it 'logs a warning to Datadog when user IDs are anonymous ' \
+     'so we can detect when users are incorrectly identified in Segment' do
+    adjusted_payload = payload.deep_merge(
+      webhook: {
+        userId: 'invalid-format'
+      }
+    )
+    logs = capture_json_logs do
+      post segment_webhooks_url,
+           as: :json,
+           params: adjusted_payload,
+           headers: signature_header(adjusted_payload)
+    end
+
+    event_log_entry = logs.find_by!(level: 'warn', application: 'segment')
+    expect(event_log_entry.slice(:evt, :message)).to eq(
+      message: 'Segment event validation failed',
+      evt: {
+        name: 'segment.event_validated',
+        outcome: 'failure',
+        payload: adjusted_payload.fetch(:webhook)
       }
     )
   end
