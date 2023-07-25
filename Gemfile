@@ -46,3 +46,5 @@ gem 'amazing_print', '~> 1.4'
 gem 'rubocop', '~> 1.54'
 
 gem 'pry-rails', '~> 0.3.9'
+
+gem "dogstatsd-ruby", "~> 5.6"

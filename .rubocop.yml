@@ -9,6 +9,8 @@
 #
 # See https://docs.rubocop.org/rubocop/configuration
 
+Style/StringHashKeys:
+  Enabled: true
 Style/Encoding:
   Enabled: false
 Metrics/AbcSize:
