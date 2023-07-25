@@ -9,7 +9,7 @@ module Segment
         Rails.configuration.statsd.increment(
           'segment.events',
           tags: [
-            "utms:ca|#{event.utm_campaign},m|#{event.utm_medium},s|#{event.utm_source},t|#{event.utm_term},co|#{event.utm_content}"
+            "utms:ca_#{event.utm_campaign}__m_#{event.utm_medium}__s_#{event.utm_source}__t_#{event.utm_term}__co_#{event.utm_content}"
           ]
         )
         Rails.configuration.statsd.flush(sync: true)

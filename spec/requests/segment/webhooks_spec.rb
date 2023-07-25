@@ -50,7 +50,7 @@ RSpec.describe 'Segment Webhooks', type: :request do
       delta: 1,
       opts: {
         tags: [
-          'utms:ca|campaign-name,m|campaign-medium,s|campaign-source,t|campaign-term,co|campaign-content'
+          'utms:ca_campaign-name__m_campaign-medium__s_campaign-source__t_campaign-term__co_campaign-content'
         ]
       }
     )
