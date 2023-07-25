@@ -55,7 +55,11 @@ class Event < ApplicationRecord
     payload['anonymousId']
   end
 
-  def guid?(id)
+  def anonymous_id_guid?(id)
+    id.to_s.match?(/^(e:|r:|)[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)
+  end
+
+  def user_id_guid?(id)
     id.to_s.match?(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)
   end
 
@@ -68,7 +72,7 @@ class Event < ApplicationRecord
       'blank'
     elsif fake_guid?(user_id)
       'fake_guid'
-    elsif guid?(user_id)
+    elsif user_id_guid?(user_id)
       'guid'
     elsif user_id.match?(/^[0-9]+$/)
       'social_user'
@@ -82,7 +86,7 @@ class Event < ApplicationRecord
       'blank'
     elsif fake_guid?(anonymous_id)
       'fake_guid'
-    elsif guid?(anonymous_id)
+    elsif anonymous_id_guid?(anonymous_id)
       'guid'
     else
       'invalid'

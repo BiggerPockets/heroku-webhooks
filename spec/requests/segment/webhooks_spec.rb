@@ -204,6 +204,23 @@ RSpec.describe 'Segment Webhooks', type: :request do
     )
   end
 
+  it 'allows guids for anonymous users starting with e: ' \
+     'so that we do not get false positives in Datadog when the ID has been generated from an email' do
+    adjusted_payload = payload.deep_merge(
+      webhook: {
+        anonymousId: 'e:17553f63-c18b-4173-9a10-2355ec3bd25f'
+      }
+    )
+    logs = capture_json_logs do
+      post segment_webhooks_url,
+           as: :json,
+           params: adjusted_payload,
+           headers: signature_header(adjusted_payload)
+    end
+
+    expect(logs.count { |log| log[:level] == 'warn' && log[:application] == 'segment' }).to eq(0)
+  end
+
   def payload
     {
       webhook: {
