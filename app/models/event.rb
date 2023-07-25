@@ -55,12 +55,12 @@ class Event < ApplicationRecord
     payload['anonymousId']
   end
 
-  def anonymous_id_guid?(id)
-    id.to_s.match?(/^(e:|r:|)[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)
+  def email_generated_guid?(id)
+    id.to_s.match?(/^e:[0-9a-fA-F]+$/)
   end
 
-  def user_id_guid?(id)
-    id.to_s.match?(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)
+  def guid?(id)
+    id.to_s.match?(/^(r:|)[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)
   end
 
   def fake_guid?(id)
@@ -70,10 +70,10 @@ class Event < ApplicationRecord
   def user_id_format
     if user_id.blank?
       'blank'
+    elsif guid?(user_id)
+      'guid'
     elsif fake_guid?(user_id)
       'fake_guid'
-    elsif user_id_guid?(user_id)
-      'guid'
     elsif user_id.match?(/^[0-9]+$/)
       'social_user'
     else
@@ -84,10 +84,10 @@ class Event < ApplicationRecord
   def anonymous_id_format
     if anonymous_id.blank?
       'blank'
+    elsif guid?(anonymous_id) || email_generated_guid?(anonymous_id)
+      'guid'
     elsif fake_guid?(anonymous_id)
       'fake_guid'
-    elsif anonymous_id_guid?(anonymous_id)
-      'guid'
     else
       'invalid'
     end

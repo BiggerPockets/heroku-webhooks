@@ -208,7 +208,7 @@ RSpec.describe 'Segment Webhooks', type: :request do
      'so that we do not get false positives in Datadog when the ID has been generated from an email' do
     adjusted_payload = payload.deep_merge(
       webhook: {
-        anonymousId: 'e:17553f63-c18b-4173-9a10-2355ec3bd25f'
+        anonymousId: 'e:17553f63c18b41739a10'
       }
     )
     logs = capture_json_logs do
