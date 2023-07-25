@@ -44,6 +44,6 @@ class Event < ApplicationRecord
   end
 
   def self.truncate_to_recent!
-    order(created_at: :desc).offset(100).destroy_all
+    order(created_at: :desc).offset(100).in_batches.destroy_all
   end
 end
