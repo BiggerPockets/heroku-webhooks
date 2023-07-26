@@ -3,18 +3,23 @@
 module Segment
   class WebhooksController < ActionController::API
     def create
-      event = Event.new(payload: params['webhook'])
-      Rails.configuration.statsd.increment(
-        'segment.events',
-        tags: [
-          "utms:#{event.compressed_utms}",
-          "user_id_format:#{event.user_id_format}",
-          "anonymous_user_id_format:#{event.anonymous_id_format}"
-        ]
-      )
-      Rails.configuration.statsd.flush(sync: true)
+      payloads = params.fetch('_json', [params]).map { |p| p['webhook'] }
+      payloads.each do |payload|
+        event = Event.new(payload:)
+        Rails.configuration.statsd.increment(
+          'segment.events',
+          tags: [
+            "utms:#{event.compressed_utms}",
+            "user_id_format:#{event.user_id_format}",
+            "anonymous_user_id_format:#{event.anonymous_id_format}"
+          ]
+        )
+        Rails.configuration.statsd.flush(sync: true)
 
-      if event.user_id_invalid? || event.anonymous_id_invalid? || event.user_id_fake_guid? || event.anonymous_id_fake_guid?
+        unless event.user_id_invalid? || event.anonymous_id_invalid? || event.user_id_fake_guid? || event.anonymous_id_fake_guid?
+          next
+        end
+
         Rails.logger.warn(
           message: 'Segment event has incorrect user or anonymous ID',
           application: 'segment',
@@ -22,7 +27,7 @@ module Segment
             name: 'segment.event_validated',
             outcome: 'failure',
             errors: event.payload_errors,
-            payload: params['webhook']
+            payload: payload
           }
         )
       end

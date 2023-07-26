@@ -10,6 +10,62 @@ RSpec.describe 'Segment Webhooks', type: :request do
   before { Rails.configuration.statsd.clear }
   after { Rails.configuration.statsd.clear }
 
+  def deep_merge_with_utm_properties(payload)
+    payload.deep_merge(
+      webhook: {
+        context: {
+          campaign: {
+            name: 'campaign-name',
+            medium: 'campaign-medium',
+            source: 'campaign-source',
+            term: 'campaign-term',
+            content: 'campaign-content'
+          }
+        }
+      }
+    )
+  end
+
+  context 'with batches of events' do
+    it 'sends the events to Datadog in batches' do
+      batch_payload = {
+        _json: [
+          payload,
+          deep_merge_with_utm_properties(payload)
+        ]
+      }
+
+      post segment_webhooks_url, as: :json, params: batch_payload, headers: signature_header(batch_payload)
+
+      events = Rails.configuration.statsd.events
+      expect(events.size).to eq(2)
+      expect(events.first.to_h).to eq(
+        type: Datadog::Statsd::COUNTER_TYPE,
+        stat: 'segment.events',
+        delta: 1,
+        opts: {
+          tags: [
+            'utms:c::/m::/s::/t::/c::',
+            'user_id_format:social_user',
+            'anonymous_user_id_format:guid'
+          ]
+        }
+      )
+      expect(events.second.to_h).to eq(
+        type: Datadog::Statsd::COUNTER_TYPE,
+        stat: 'segment.events',
+        delta: 1,
+        opts: {
+          tags: [
+            'utms:c::campaign-name/m::campaign-medium/s::campaign-source/t::campaign-term/c::campaign-content',
+            'user_id_format:social_user',
+            'anonymous_user_id_format:guid'
+          ]
+        }
+      )
+    end
+  end
+
   it 'stores the UTMs of the Segment event in Datadog via Statsd' do
     payload_with_utms = payload.deep_merge(
       webhook: {
