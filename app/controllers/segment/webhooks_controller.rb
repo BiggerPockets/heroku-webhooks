@@ -31,7 +31,11 @@ module Segment
             outcome: 'failure',
             errors: event.payload_errors,
             payload: payload
-          }
+          },
+          tags: [
+            "user_id_format:#{event.user_id_format}",
+            "anonymous_user_id_format:#{event.anonymous_id_format}"
+          ]
         )
       end
 
