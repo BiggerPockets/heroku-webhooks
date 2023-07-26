@@ -22,7 +22,6 @@ module Segment
 
         Rails.logger.warn(
           message: 'Segment event has incorrect user or anonymous ID',
-          application: 'segment',
           evt: {
             name: 'segment.event_validated',
             outcome: 'failure',

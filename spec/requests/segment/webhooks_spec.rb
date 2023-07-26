@@ -235,7 +235,7 @@ RSpec.describe 'Segment Webhooks', type: :request do
            headers: signature_header(adjusted_payload)
     end
 
-    event_log_entry = logs.find_by!(level: 'warn', application: 'segment')
+    event_log_entry = logs.find_by!(level: 'warn')
     expect(event_log_entry.slice(:evt, :message)).to eq(
       message: 'Segment event has incorrect user or anonymous ID',
       evt: {
