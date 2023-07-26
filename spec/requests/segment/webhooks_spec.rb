@@ -49,7 +49,11 @@ RSpec.describe 'Segment Webhooks', type: :request do
         delta: 1,
         opts: {
           tags: [
-            'utms:c::/m::/s::/t::/c::',
+            'utm_campaign:',
+            'utm_medium:',
+            'utm_content:',
+            'utm_source:',
+            'utm_term:',
             'user_id_format:social_user',
             'anonymous_user_id_format:guid'
           ]
@@ -61,7 +65,11 @@ RSpec.describe 'Segment Webhooks', type: :request do
         delta: 1,
         opts: {
           tags: [
-            'utms:c::campaign-name/m::campaign-medium/s::campaign-source/t::campaign-term/c::campaign-content',
+            'utm_campaign:campaign-name',
+            'utm_medium:campaign-medium',
+            'utm_content:campaign-content',
+            'utm_source:campaign-source',
+            'utm_term:campaign-term',
             'user_id_format:social_user',
             'anonymous_user_id_format:guid'
           ]
@@ -97,7 +105,11 @@ RSpec.describe 'Segment Webhooks', type: :request do
       delta: 1,
       opts: {
         tags: [
-          'utms:c::campaign-name/m::campaign-medium/s::campaign-source/t::campaign-term/c::campaign-content',
+          'utm_campaign:campaign-name',
+          'utm_medium:campaign-medium',
+          'utm_content:campaign-content',
+          'utm_source:campaign-source',
+          'utm_term:campaign-term',
           'user_id_format:social_user',
           'anonymous_user_id_format:guid'
         ]
@@ -126,7 +138,11 @@ RSpec.describe 'Segment Webhooks', type: :request do
       delta: 1,
       opts: {
         tags: [
-          'utms:c::/m::/s::/t::/c::',
+          'utm_campaign:',
+          'utm_medium:',
+          'utm_content:',
+          'utm_source:',
+          'utm_term:',
           'user_id_format:blank',
           'anonymous_user_id_format:blank'
         ]
@@ -155,7 +171,11 @@ RSpec.describe 'Segment Webhooks', type: :request do
       delta: 1,
       opts: {
         tags: [
-          'utms:c::/m::/s::/t::/c::',
+          'utm_campaign:',
+          'utm_medium:',
+          'utm_content:',
+          'utm_source:',
+          'utm_term:',
           'user_id_format:fake_guid',
           'anonymous_user_id_format:fake_guid'
         ]
@@ -184,7 +204,11 @@ RSpec.describe 'Segment Webhooks', type: :request do
       delta: 1,
       opts: {
         tags: [
-          'utms:c::/m::/s::/t::/c::',
+          'utm_campaign:',
+          'utm_medium:',
+          'utm_content:',
+          'utm_source:',
+          'utm_term:',
           'user_id_format:guid',
           'anonymous_user_id_format:guid'
         ]
@@ -213,7 +237,11 @@ RSpec.describe 'Segment Webhooks', type: :request do
       delta: 1,
       opts: {
         tags: [
-          'utms:c::/m::/s::/t::/c::',
+          'utm_campaign:',
+          'utm_medium:',
+          'utm_content:',
+          'utm_source:',
+          'utm_term:',
           'user_id_format:invalid',
           'anonymous_user_id_format:invalid'
         ]

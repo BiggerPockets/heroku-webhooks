@@ -10,7 +10,11 @@ module Segment
         Rails.configuration.statsd.increment(
           'segment.events',
           tags: [
-            "utms:#{event.compressed_utms}",
+            "utm_campaign:#{event.utm_campaign}",
+            "utm_medium:#{event.utm_medium}",
+            "utm_content:#{event.utm_content}",
+            "utm_source:#{event.utm_source}",
+            "utm_term:#{event.utm_term}",
             "user_id_format:#{event.user_id_format}",
             "anonymous_user_id_format:#{event.anonymous_id_format}"
           ]
