@@ -3,8 +3,9 @@
 module Segment
   class WebhooksController < ActionController::API
     def create
-      payloads = params.fetch('_json', [params]).map { |p| p['webhook'] }
-      payloads.each do |payload|
+      webhook_payload = params.fetch('webhook')
+      payload_batch = webhook_payload.fetch('_json', [webhook_payload])
+      payload_batch.each do |payload|
         event = Event.new(payload:)
         Rails.configuration.statsd.increment(
           'segment.events',

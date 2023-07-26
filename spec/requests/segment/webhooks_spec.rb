@@ -12,15 +12,13 @@ RSpec.describe 'Segment Webhooks', type: :request do
 
   def deep_merge_with_utm_properties(payload)
     payload.deep_merge(
-      webhook: {
-        context: {
-          campaign: {
-            name: 'campaign-name',
-            medium: 'campaign-medium',
-            source: 'campaign-source',
-            term: 'campaign-term',
-            content: 'campaign-content'
-          }
+      context: {
+        campaign: {
+          name: 'campaign-name',
+          medium: 'campaign-medium',
+          source: 'campaign-source',
+          term: 'campaign-term',
+          content: 'campaign-content'
         }
       }
     )
@@ -30,9 +28,16 @@ RSpec.describe 'Segment Webhooks', type: :request do
     it 'sends the events to Datadog in batches' do
       batch_payload = {
         _json: [
-          payload,
-          deep_merge_with_utm_properties(payload)
-        ]
+          webhook_payload,
+          deep_merge_with_utm_properties(webhook_payload)
+        ],
+        webhook: {
+          _json: [
+            webhook_payload,
+            deep_merge_with_utm_properties(webhook_payload)
+          ]
+        }
+        
       }
 
       post segment_webhooks_url, as: :json, params: batch_payload, headers: signature_header(batch_payload)
@@ -262,82 +267,86 @@ RSpec.describe 'Segment Webhooks', type: :request do
 
   def payload
     {
-      webhook: {
-        _metadata: {
-          bundled: [
-            'Crazy Egg',
-            'Google Tag Manager',
-            'Parsely',
-            'ProfitWell',
-            'Segment.io'
+      webhook: webhook_payload
+    }
+  end
+
+  def webhook_payload
+    {
+      _metadata: {
+        bundled: [
+          'Crazy Egg',
+          'Google Tag Manager',
+          'Parsely',
+          'ProfitWell',
+          'Segment.io'
+        ],
+        bundledIds: %w[
+          5cf835671506090001f4640c
+          K983FIJKOf
+          5e9f21acf4e6e145d8640e89
+          605e498a646cadfdbd2b937a
+        ],
+        unbundled: []
+      },
+      anonymousId: '97cfe16b-551a-4ddc-89d0-1c5b1ccb4ea0',
+      channel: 'client',
+      context: {
+        ip: '107.200.241.225',
+        library: {
+          name: 'analytics.js',
+          version: 'next-1.53.0'
+        },
+        locale: 'en-US',
+        page: {
+          path: '/forums',
+          referrer: 'https://www.biggerpockets.com/forums',
+          search: '',
+          title: 'Real Estate Investing Forums, Tips & Advice | BiggerPockets',
+          url: 'https://www.biggerpockets.com/forums'
+        },
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+        userAgentData: {
+          brands: [
+            {
+              brand: 'Not.A/Brand',
+              version: '8'
+            },
+            {
+              brand: 'Chromium',
+              version: '114'
+            },
+            {
+              brand: 'Google Chrome',
+              version: '114'
+            }
           ],
-          bundledIds: %w[
-            5cf835671506090001f4640c
-            K983FIJKOf
-            5e9f21acf4e6e145d8640e89
-            605e498a646cadfdbd2b937a
-          ],
-          unbundled: []
+          mobile: false,
+          platform: 'macOS'
+        }
+      },
+      event: 'Navigation Menu Opened',
+      integrations: {
+        "Actions Amplitude": {
+          session_id: 1_690_204_727_202
         },
-        anonymousId: '97cfe16b-551a-4ddc-89d0-1c5b1ccb4ea0',
-        channel: 'client',
-        context: {
-          ip: '107.200.241.225',
-          library: {
-            name: 'analytics.js',
-            version: 'next-1.53.0'
-          },
-          locale: 'en-US',
-          page: {
-            path: '/forums',
-            referrer: 'https://www.biggerpockets.com/forums',
-            search: '',
-            title: 'Real Estate Investing Forums, Tips & Advice | BiggerPockets',
-            url: 'https://www.biggerpockets.com/forums'
-          },
-          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-          userAgentData: {
-            brands: [
-              {
-                brand: 'Not.A/Brand',
-                version: '8'
-              },
-              {
-                brand: 'Chromium',
-                version: '114'
-              },
-              {
-                brand: 'Google Chrome',
-                version: '114'
-              }
-            ],
-            mobile: false,
-            platform: 'macOS'
-          }
-        },
-        event: 'Navigation Menu Opened',
-        integrations: {
-          "Actions Amplitude": {
-            session_id: 1_690_204_727_202
-          },
-          Parsely: false
-        },
-        messageId: 'ajs-next-6e24a56e8262bc1697fbf8cbc229ae6c',
-        originalTimestamp: '2023-07-24T13:42:02.952Z',
-        projectId: '9BsIBf5Kb7',
-        properties: {
-          current_url: 'https://www.biggerpockets.com/forums',
-          elementId: 'desktop-main-/forums',
-          plan_id: 'REGULAR',
-          text: 'FORUMS'
-        },
-        receivedAt: '2023-07-24T13:42:04.109Z',
-        sentAt: '2023-07-24T13:42:02.966Z',
-        timestamp: '2023-07-24T13:42:04.095Z',
-        type: 'track',
-        userId: '2638327',
-        version: 2
-      }
+        Parsely: false
+      },
+      messageId: 'ajs-next-6e24a56e8262bc1697fbf8cbc229ae6c',
+      originalTimestamp: '2023-07-24T13:42:02.952Z',
+      projectId: '9BsIBf5Kb7',
+      properties: {
+        current_url: 'https://www.biggerpockets.com/forums',
+        elementId: 'desktop-main-/forums',
+        plan_id: 'REGULAR',
+        text: 'FORUMS'
+      },
+      receivedAt: '2023-07-24T13:42:04.109Z',
+      sentAt: '2023-07-24T13:42:02.966Z',
+      timestamp: '2023-07-24T13:42:04.095Z',
+      type: 'track',
+      userId: '2638327',
+      version: 2
     }
   end
 
