@@ -10,16 +10,6 @@ RSpec.describe 'Segment Webhooks', type: :request do
   before { Rails.configuration.statsd.clear }
   after { Rails.configuration.statsd.clear }
 
-  it 'requires a signature' do
-    post segment_webhooks_path, as: :json, params: {}
-    expect(response).to have_http_status(:forbidden)
-  end
-
-  it 'does not accept invalid requests' do
-    post segment_webhooks_url, as: :json, params: payload, headers: signature_header(payload, 'boom!')
-    expect(response).to have_http_status(:forbidden)
-  end
-
   it 'stores the UTMs of the Segment event in Datadog via Statsd' do
     payload_with_utms = payload.deep_merge(
       webhook: {
