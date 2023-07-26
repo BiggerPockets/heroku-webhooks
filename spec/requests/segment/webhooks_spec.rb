@@ -37,7 +37,6 @@ RSpec.describe 'Segment Webhooks', type: :request do
             deep_merge_with_utm_properties(webhook_payload)
           ]
         }
-        
       }
 
       post segment_webhooks_url, as: :json, params: batch_payload, headers: signature_header(batch_payload)

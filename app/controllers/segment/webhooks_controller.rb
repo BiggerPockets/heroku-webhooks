@@ -15,7 +15,6 @@ module Segment
             "anonymous_user_id_format:#{event.anonymous_id_format}"
           ]
         )
-        Rails.configuration.statsd.flush(sync: true)
 
         unless event.user_id_invalid? || event.anonymous_id_invalid? || event.user_id_fake_guid? || event.anonymous_id_fake_guid?
           next
@@ -32,6 +31,8 @@ module Segment
           }
         )
       end
+
+      Rails.configuration.statsd.flush(sync: true)
 
       render head: :ok
     end
