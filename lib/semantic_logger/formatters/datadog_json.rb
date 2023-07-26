@@ -20,8 +20,6 @@ module SemanticLogger
       end
 
       def named_tags
-        return if log.named_tags.to_h.empty?
-
         hash.deep_merge!(log.named_tags)
       end
 

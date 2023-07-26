@@ -32,10 +32,8 @@ module Segment
             errors: event.payload_errors,
             payload: payload
           },
-          dd: {
-            user_id_format: event.user_id_format,
-            anonymous_user_id_format: event.anonymous_id_format
-          }
+          user_id_format: event.user_id_format,
+          anonymous_user_id_format: event.anonymous_id_format
         )
       end
 
