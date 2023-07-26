@@ -33,7 +33,11 @@ module Segment
             payload: payload
           },
           user_id_format: event.user_id_format,
-          anonymous_user_id_format: event.anonymous_id_format
+          anonymous_user_id_format: event.anonymous_id_format,
+          dd: {
+            user_id_format: event.user_id_format,
+            anonymous_user_id_format: event.anonymous_id_format
+          }
         )
       end
 
