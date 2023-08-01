@@ -20,9 +20,7 @@ module Segment
           ]
         )
 
-        unless event.user_id_invalid? || event.anonymous_id_invalid? || event.user_id_fake_guid? || event.anonymous_id_fake_guid?
-          next
-        end
+        next if event.user_and_anonymous_id_valid?
 
         Rails.logger.warn(
           message: 'Segment event has incorrect user or anonymous ID',
@@ -30,7 +28,7 @@ module Segment
             name: 'segment.event_validated',
             outcome: 'failure',
             errors: event.payload_errors,
-            payload: payload
+            payload:
           },
           dd: {
             user_id_format: event.user_id_format,
