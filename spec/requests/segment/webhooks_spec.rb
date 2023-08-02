@@ -10,20 +10,6 @@ RSpec.describe 'Segment Webhooks', type: :request do
   before { Rails.configuration.statsd.clear }
   after { Rails.configuration.statsd.clear }
 
-  def deep_merge_with_utm_properties(payload)
-    payload.deep_merge(
-      context: {
-        campaign: {
-          name: 'campaign-name',
-          medium: 'campaign-medium',
-          source: 'campaign-source',
-          term: 'campaign-term',
-          content: 'campaign-content'
-        }
-      }
-    )
-  end
-
   context 'with batches of events' do
     it 'sends the events to Datadog in batches' do
       batch_payload = {
@@ -392,6 +378,20 @@ RSpec.describe 'Segment Webhooks', type: :request do
         request.raw_post
       )
     }
+  end
+
+  def deep_merge_with_utm_properties(payload)
+    payload.deep_merge(
+      context: {
+        campaign: {
+          name: 'campaign-name',
+          medium: 'campaign-medium',
+          source: 'campaign-source',
+          term: 'campaign-term',
+          content: 'campaign-content'
+        }
+      }
+    )
   end
 end
 
