@@ -136,37 +136,54 @@ RSpec.describe 'Segment Webhooks', type: :request do
     )
   end
 
-  it 'labels the user IDs as fake guid when the ID has groups of four characters split by - ' \
-     'so we can detect when users are incorrectly identified in Segment' do
-    payload_without_user_ids = payload.deep_merge(
-      webhook: {
-        userId: 'abcd-efgh-efgh-ijkl-mnop',
-        anonymousId: 'abcd-efgh-efgh-ijkl-mnop'
-      }
-    )
-    post segment_webhooks_url,
-         as: :json,
-         params: payload_without_user_ids,
-         headers: signature_header(payload_without_user_ids)
+  context 'when the user ID is a fake GUID' do
+    it 'labels the user IDs as fake guid ' \
+       'so we can detect when users are incorrectly identified in Segment' do
+      payload_without_user_ids = payload.deep_merge(
+        webhook: {
+          userId: 'abcd-efgh-efgh-ijkl-mnop',
+          anonymousId: 'abcd-efgh-efgh-ijkl-mnop'
+        }
+      )
+      post segment_webhooks_url,
+           as: :json,
+           params: payload_without_user_ids,
+           headers: signature_header(payload_without_user_ids)
 
-    events = Rails.configuration.statsd.events
-    expect(events.size).to eq(1)
-    expect(events.first.to_h).to eq(
-      type: Datadog::Statsd::COUNTER_TYPE,
-      stat: 'segment.events',
-      delta: 1,
-      opts: {
-        tags: [
-          'utm_campaign:',
-          'utm_medium:',
-          'utm_content:',
-          'utm_source:',
-          'utm_term:',
-          'user_id_format:fake_guid',
-          'anonymous_user_id_format:fake_guid'
-        ]
-      }
-    )
+      events = Rails.configuration.statsd.events
+      expect(events.size).to eq(1)
+      expect(events.first.to_h).to eq(
+        type: Datadog::Statsd::COUNTER_TYPE,
+        stat: 'segment.events',
+        delta: 1,
+        opts: {
+          tags: [
+            'utm_campaign:',
+            'utm_medium:',
+            'utm_content:',
+            'utm_source:',
+            'utm_term:',
+            'user_id_format:fake_guid',
+            'anonymous_user_id_format:fake_guid'
+          ]
+        }
+      )
+    end
+
+    it 'records the fake GUID in the invalid user IDs table' do
+      payload_without_user_ids = payload.deep_merge(
+        webhook: {
+          userId: 'abcd-efgh-efgh-ijkl-mnop'
+        }
+      )
+      post segment_webhooks_url,
+           as: :json,
+           params: payload_without_user_ids,
+           headers: signature_header(payload_without_user_ids)
+
+      expect(InvalidUserId.count).to eq(1)
+      expect(InvalidUserId.first.value).to eq('abcd-efgh-efgh-ijkl-mnop')
+    end
   end
 
   it 'labels the user IDs as fake guid when the ID has groups of four characters split by - ' \
