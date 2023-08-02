@@ -22,7 +22,9 @@ module Segment
 
         next if event.user_and_anonymous_id_valid?
 
-        InvalidUserId.create!(value: event.user_id) if event.user_id_fake_guid?
+        InvalidUserId.find_or_create_by!(value: event.user_id) if event.user_id_fake_guid?
+
+        next if event.user_id_fake_guid? && InvalidUserId.find_by(value: event.user_id)&.aliased?
 
         Rails.logger.warn(
           message: 'Segment event has incorrect user or anonymous ID',

@@ -171,18 +171,53 @@ RSpec.describe 'Segment Webhooks', type: :request do
     end
 
     it 'records the fake GUID in the invalid user IDs table' do
-      payload_without_user_ids = payload.deep_merge(
+      payload_with_fake_guid_user_ids = payload.deep_merge(
         webhook: {
           userId: 'abcd-efgh-efgh-ijkl-mnop'
         }
       )
       post segment_webhooks_url,
            as: :json,
-           params: payload_without_user_ids,
-           headers: signature_header(payload_without_user_ids)
+           params: payload_with_fake_guid_user_ids,
+           headers: signature_header(payload_with_fake_guid_user_ids)
 
       expect(InvalidUserId.count).to eq(1)
       expect(InvalidUserId.first.value).to eq('abcd-efgh-efgh-ijkl-mnop')
+    end
+
+    it 'does not create duplicate fake user IDs' do
+      InvalidUserId.create!(value: 'abcd-efgh-efgh-ijkl-mnop')
+      payload_with_fake_guid_user_ids = payload.deep_merge(
+        webhook: {
+          userId: 'abcd-efgh-efgh-ijkl-mnop'
+        }
+      )
+      post segment_webhooks_url,
+           as: :json,
+           params: payload_with_fake_guid_user_ids,
+           headers: signature_header(payload_with_fake_guid_user_ids)
+
+      expect(InvalidUserId.count).to eq(1)
+      expect(InvalidUserId.first.value).to eq('abcd-efgh-efgh-ijkl-mnop')
+    end
+
+    context 'when the fake user ID has already been aliased to a real user ID' do
+      it 'logs that the user ID has already been aliased to a real user ID' do
+        InvalidUserId.create!(value: 'abcd-efgh-efgh-ijkl-mnop', aliased_to: 1234)
+        payload_with_fake_guid_user_ids = payload.deep_merge(
+          webhook: {
+            userId: 'abcd-efgh-efgh-ijkl-mnop'
+          }
+        )
+        logs = capture_json_logs do
+          post segment_webhooks_url,
+               as: :json,
+               params: payload_with_fake_guid_user_ids,
+               headers: signature_header(payload_with_fake_guid_user_ids)
+        end
+
+        expect(logs.count { |log| log[:level] == 'warn' }).to eq(0)
+      end
     end
   end
 
