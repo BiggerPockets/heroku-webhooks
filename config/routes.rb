@@ -8,7 +8,7 @@ Rails.application.routes.draw do
     resources :webhooks, only: [:create]
   end
 
-  resources :invalid_user_ids, only: [:update]
+  resources :invalid_user_ids, only: [:index, :update]
   resources :events, only: [:index]
   resources :setup, only: [:index]
 
