@@ -10,12 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_25_220113) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_02_103547) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "events", force: :cascade do |t|
     t.jsonb "payload", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "invalid_user_ids", force: :cascade do |t|
+    t.string "value"
+    t.integer "aliased_to"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

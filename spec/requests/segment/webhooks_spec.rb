@@ -278,6 +278,8 @@ RSpec.describe 'Segment Webhooks', type: :request do
     expect(logs.count { |log| log[:level] == 'warn' && log[:application] == 'segment' }).to eq(0)
   end
 
+  private
+
   def payload
     {
       webhook: webhook_payload
